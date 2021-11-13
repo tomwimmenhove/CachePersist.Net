@@ -6,10 +6,18 @@ namespace serialization
     public class BinaryCompressedStreamFormatter : IStreamFormatter
     {
         private BinaryStreamFormatter _formatter = new BinaryStreamFormatter();
+        private CompressionLevel _compressionLevel = CompressionLevel.Optimal;
+
+        public BinaryCompressedStreamFormatter() { }
+
+        public BinaryCompressedStreamFormatter(CompressionLevel compressionLevel)
+        {
+            _compressionLevel = compressionLevel;
+        }
 
         public void Serialize(Stream stream, object value)
         {
-            using (var compressor = new GZipStream(stream, CompressionLevel.Fastest))
+            using (var compressor = new GZipStream(stream, _compressionLevel))
             {
                 _formatter.Serialize(compressor, value);
             }
