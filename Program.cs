@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Text;
+using System.Diagnostics;
 using ProtoBuf;
 
 namespace serialization
@@ -12,33 +12,63 @@ namespace serialization
         public int Something { get; set; }
     }
 
+    [Serializable, ProtoContract]
+    enum eTest : short
+    {
+        One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten
+    }
+
+    [Serializable, ProtoContract]
+    struct sTest
+    {
+        [ProtoMember(1)]
+        public eTest A {get; set;}
+
+        [ProtoMember(2)]
+        public eTest B {get; set;}
+    }
+
     class Program
     {
-        static void Main(string[] args)
+        static void Test<T>(T value, IStreamFormatter formatter)
         {
-            //var formatter = new BinaryCompressedStreamFormatter();
-            var formatter = new ProtobufStreamFormatter<Test>();
-
             var tpmFile = "/tmp/formattertest";//Path.GetTempFileName();
 
-            var tmp = new Test();
-            tmp.Something = 42;
+            var sw = new Stopwatch();
+            sw.Start();
+            AnyFormatter.Serialize(tpmFile, value, formatter);
+            sw.Stop();
+            Console.WriteLine($"Serialization using {formatter} took {sw.Elapsed}");
 
-            AnyFormatter.Serialize(tpmFile, tmp, formatter);
+            sw.Reset();
 
-            var bla = AnyFormatter.Deserialize<Test>(tpmFile);
-
-            var name = formatter.GetType().AssemblyQualifiedName;
-
-            var nameb = Encoding.Unicode.GetBytes(name);
-
-            var size = new FileInfo(tpmFile).Length;
+            sw.Start();
+            var restored = AnyFormatter.Deserialize<sTest[]>(tpmFile);
+            sw.Stop();
+            Console.WriteLine($"Deserialization using {formatter} took {sw.Elapsed}");
 
             //File.Delete(tpmFile);
+            
+            var size = new FileInfo(tpmFile).Length;
 
-            Console.WriteLine(size);
+            Console.WriteLine($"File size: {size / 1024}KB");
+        }
 
-            Console.ReadLine();
+        static void Main(string[] args)
+        {
+            var n = 1000000;
+            var manyThings = new sTest[n];
+
+            var rnd = new Random();
+            for (var i = 0; i < n; i++)
+            {
+                manyThings[i].A = (eTest) rnd.Next();
+                manyThings[i].B = (eTest) rnd.Next();
+            }
+
+            Test(manyThings, new BinaryCompressedStreamFormatter());
+            Test(manyThings, new BinaryStreamFormatter());
+            Test(manyThings, new ProtobufStreamFormatter<sTest[]>());
         }
     }
 }
