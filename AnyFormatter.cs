@@ -3,8 +3,25 @@ using System.IO;
 
 namespace serialization
 {
-    class AnyFormatter
+    public class AnyFormatter
     {
+        private static IStreamFormatter GetStreamFormatter(Stream stream)
+        {
+            using (var reader = new BinaryReader(stream, System.Text.Encoding.Default, true))
+            {
+                var serializeName = reader.ReadString();
+                return (IStreamFormatter) Activator.CreateInstance(Type.GetType(serializeName));
+            }
+        }
+
+        public static IStreamFormatter GetStreamFormatter(string filePath)
+        {
+            using (var stream = File.Open(filePath, FileMode.Open))
+            {
+                return GetStreamFormatter(stream);
+            }
+        }
+
         public static void Serialize<T>(Stream stream, T value, IStreamFormatter formatter)
         {
             using (var writer = new BinaryWriter(stream))
@@ -21,14 +38,9 @@ namespace serialization
 
         public static T Deserialize<T>(Stream stream)
         {
-            using (var reader = new BinaryReader(stream))
-            {
-                /* Get the formatter that was used */
-                var serializeName = reader.ReadString();
-                var formatter = (IStreamFormatter)Activator.CreateInstance(Type.GetType(serializeName));
+            var formatter = GetStreamFormatter(stream);
 
-                return (T)formatter.Deserialize(stream);
-            }
+            return (T)formatter.Deserialize(stream);
         }
 
         public static void Serialize<T>(string filePath, T value, IStreamFormatter formatter)

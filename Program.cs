@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Text;
+using ProtoBuf;
 
 namespace serialization
 {
-    [Serializable]
+    [Serializable, ProtoContract]
     class Test
     {
+        [ProtoMember(1)]
         public int Something { get; set; }
     }
 
@@ -13,9 +16,10 @@ namespace serialization
     {
         static void Main(string[] args)
         {
-            var formatter = new BinaryCompressedStreamFormatter();
+            //var formatter = new BinaryCompressedStreamFormatter();
+            var formatter = new ProtobufStreamFormatter<Test>();
 
-            var tpmFile = Path.GetTempFileName();
+            var tpmFile = "/tmp/formattertest";//Path.GetTempFileName();
 
             var tmp = new Test();
             tmp.Something = 42;
@@ -24,9 +28,13 @@ namespace serialization
 
             var bla = AnyFormatter.Deserialize<Test>(tpmFile);
 
+            var name = formatter.GetType().AssemblyQualifiedName;
+
+            var nameb = Encoding.Unicode.GetBytes(name);
+
             var size = new FileInfo(tpmFile).Length;
 
-            File.Delete(tpmFile);
+            //File.Delete(tpmFile);
 
             Console.WriteLine(size);
 

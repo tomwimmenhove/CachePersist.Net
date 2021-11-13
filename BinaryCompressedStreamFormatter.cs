@@ -9,7 +9,7 @@ namespace serialization
 
         public void Serialize(Stream stream, object value)
         {
-            using (var compressor = new GZipStream(stream, CompressionMode.Compress))
+            using (var compressor = new GZipStream(stream, CompressionLevel.Fastest))
             {
                 _formatter.Serialize(compressor, value);
             }
