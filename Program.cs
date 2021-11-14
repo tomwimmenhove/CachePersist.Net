@@ -56,6 +56,25 @@ namespace serialization
 
         static void Main(string[] args)
         {
+            var storeFile = "/tmp/store";
+
+            var json = File.Exists(storeFile) ? File.ReadAllText(storeFile) : null;
+
+            //var store = new CacheKeyStorageJsonFile(storeFile);
+            var store = new CacheKeyStorageJsonString(json);
+
+             store.Saving += (o, e) =>
+             {
+                 File.WriteAllText(storeFile, e.Json);
+             };
+            
+            var pd = new PersistentCacheKeyDictionary(store);
+
+            Console.WriteLine(pd["hoi"]);
+
+            pd["hoi"] = "test";
+
+            return;
             var n = 1000000;
             var manyThings = new sTest[n];
 
@@ -66,8 +85,10 @@ namespace serialization
                 manyThings[i].B = (eTest) rnd.Next();
             }
 
-            Test(manyThings, new BinaryCompressedStreamFormatter());
-            Test(manyThings, new BinaryStreamFormatter());
+            //Test(manyThings, new BinaryCompressedStreamFormatter());
+            //Test(manyThings, new BinaryCompressedStreamFormatter(System.IO.Compression.CompressionLevel.Fastest));
+            //Test(manyThings, new BinaryCompressedStreamFormatter(System.IO.Compression.CompressionLevel.NoCompression));
+            //Test(manyThings, new BinaryStreamFormatter());
             Test(manyThings, new ProtobufStreamFormatter<sTest[]>());
         }
     }
