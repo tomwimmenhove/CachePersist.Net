@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace serialization
+namespace Serialization.Formatters
 {
     public class AnyFormatter
     {
@@ -11,14 +11,6 @@ namespace serialization
             {
                 var serializeName = reader.ReadString();
                 return (IStreamFormatter) Activator.CreateInstance(Type.GetType(serializeName));
-            }
-        }
-
-        public static IStreamFormatter GetStreamFormatter(string filePath)
-        {
-            using (var stream = File.Open(filePath, FileMode.Open))
-            {
-                return GetStreamFormatter(stream);
             }
         }
 

@@ -1,6 +1,6 @@
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace serialization
+namespace Serialization.Formatters
 {
     public class BinaryStreamFormatter : FormatterWrapper
     {

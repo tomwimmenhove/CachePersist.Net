@@ -1,7 +1,7 @@
 using System.IO;
 using System.IO.Compression;
 
-namespace serialization
+namespace Serialization.Formatters
 {
     public class BinaryCompressedStreamFormatter : IStreamFormatter
     {

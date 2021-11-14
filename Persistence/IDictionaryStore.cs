@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace serialization
+namespace Serialization.Persistence
 {
-    public interface IPersistentDictionaryStore<TKey, TValue>
+    public interface IDictionaryStore<TKey, TValue>
     {
         IDictionary<TKey, TValue> Dictionary { get; }
 

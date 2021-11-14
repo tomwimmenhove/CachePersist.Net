@@ -1,17 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace serialization
+namespace Serialization.Persistence
 {
     public class PersistentDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        private IPersistentDictionaryStore<TKey, TValue> _store;
+        private IDictionaryStore<TKey, TValue> _store;
 
         public ICollection<TKey> Keys => _store.Dictionary.Keys;
         public ICollection<TValue> Values => _store.Dictionary.Values;
         public int Count => _store.Dictionary.Count;
 
-        public PersistentDictionary(IPersistentDictionaryStore<TKey, TValue> store)
+        public PersistentDictionary(IDictionaryStore<TKey, TValue> store)
         {
             _store = store;
         }

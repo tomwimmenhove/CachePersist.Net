@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace serialization
+namespace Serialization.Formatters
 {
     public class ProtobufStreamFormatter<T> : IStreamFormatter
     {

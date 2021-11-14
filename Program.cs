@@ -2,8 +2,10 @@
 using System.IO;
 using System.Diagnostics;
 using ProtoBuf;
+using Serialization.Formatters;
+using Serialization.Caching;
 
-namespace serialization
+namespace Serialization
 {
     [Serializable, ProtoContract]
     class Test
@@ -58,17 +60,8 @@ namespace serialization
         {
             var storeFile = "/tmp/store";
 
-            var json = File.Exists(storeFile) ? File.ReadAllText(storeFile) : null;
-
-            //var store = new CacheKeyStorageJsonFile(storeFile);
-            var store = new CacheKeyStorageJsonString(json);
-
-             store.Saving += (o, e) =>
-             {
-                 File.WriteAllText(storeFile, e.Json);
-             };
-            
-            var pd = new PersistentCacheKeyDictionary(store);
+            var store = new CacheKeyStorageJsonFile(storeFile);
+            var pd = new CacheKeyDictionary(store);
 
             Console.WriteLine(pd["hoi"]);
 

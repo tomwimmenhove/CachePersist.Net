@@ -1,7 +1,7 @@
 using System.IO;
 using System.Runtime.Serialization;
 
-namespace serialization
+namespace Serialization.Formatters
 {
     public class FormatterWrapper : IStreamFormatter
     {
