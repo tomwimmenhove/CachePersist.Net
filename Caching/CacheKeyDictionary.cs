@@ -4,7 +4,7 @@ namespace Serialization.Caching
 {
     public class CacheKeyDictionary : PersistentDictionary<string, string>
     {
-        public CacheKeyDictionary(IDictionaryStore<string, string> store)
+        public CacheKeyDictionary(ICacheKeyStorage store)
             : base(store)
         { }
     }
