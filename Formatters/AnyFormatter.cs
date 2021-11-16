@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Serialization.Formatters
+namespace CachePersist.Net.Formatters
 {
     public class AnyFormatter
     {

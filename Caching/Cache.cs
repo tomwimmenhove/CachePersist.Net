@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using Serialization.Formatters;
+using CachePersist.Net.Formatters;
 
-namespace Serialization.Caching
+namespace CachePersist.Net.Caching
 {
     public class Cache
     {

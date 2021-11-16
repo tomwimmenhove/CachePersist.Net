@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Serialization.Persistence
+namespace CachePersist.Net.Persistence
 {
     public interface IDictionaryStore<TKey, TValue>
     {

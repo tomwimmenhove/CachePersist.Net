@@ -1,6 +1,6 @@
-using Serialization.Persistence;
+using CachePersist.Net.Persistence;
 
-namespace Serialization.Caching
+namespace CachePersist.Net.Caching
 {
     public class CacheKeyDictionary : PersistentDictionary<string, string>
     {

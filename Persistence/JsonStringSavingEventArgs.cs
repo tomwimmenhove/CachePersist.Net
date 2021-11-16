@@ -1,6 +1,6 @@
 using System;
 
-namespace Serialization.Persistence
+namespace CachePersist.Net.Persistence
 {
     public class JsonStringSavingEventArgs : EventArgs
     {

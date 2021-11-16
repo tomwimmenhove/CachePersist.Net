@@ -1,7 +1,7 @@
 using System.IO;
 using System.Runtime.Serialization;
 
-namespace Serialization.Formatters
+namespace CachePersist.Net.Formatters
 {
     public class FormatterWrapper : IStreamFormatter
     {

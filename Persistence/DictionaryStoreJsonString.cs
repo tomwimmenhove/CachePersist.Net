@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Serialization.Persistence
+namespace CachePersist.Net.Persistence
 {
     public class DictionaryStoreJsonString<TKey, TValue> : IDictionaryStore<TKey, TValue>
     {

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Serialization.Persistence
+namespace CachePersist.Net.Persistence
 {
     public class PersistentDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {

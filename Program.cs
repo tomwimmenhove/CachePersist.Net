@@ -1,11 +1,9 @@
 ﻿using System;
-using System.IO;
-using System.Diagnostics;
 using ProtoBuf;
-using Serialization.Formatters;
-using Serialization.Caching;
+using CachePersist.Net.Formatters;
+using CachePersist.Net.Caching;
 
-namespace Serialization
+namespace CachePersist.Net
 {
     [Serializable, ProtoContract]
     class Test

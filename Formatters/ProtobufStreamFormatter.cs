@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Serialization.Formatters
+namespace CachePersist.Net.Formatters
 {
     public class ProtobufStreamFormatter<T> : IStreamFormatter
     {
