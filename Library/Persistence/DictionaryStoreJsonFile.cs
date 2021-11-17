@@ -19,11 +19,13 @@ namespace CachePersist.Net.Persistence
             {
                 using var file = File.OpenText(filename);
                 Dictionary = (IDictionary<TKey, TValue>)_serializer.Deserialize(file, typeof(IDictionary<TKey, TValue>));
+                if (Dictionary != null)
+                {
+                    return;
+                }
             }
-            else
-            {
-                Dictionary = new Dictionary<TKey, TValue>();
-            }
+
+            Dictionary = new Dictionary<TKey, TValue>();
         }
 
         public void Save()

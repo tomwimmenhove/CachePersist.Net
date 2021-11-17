@@ -1,87 +1,117 @@
 ﻿using System;
-using ProtoBuf;
+using System.IO;
+using CachePersist.Net.Persistence;
 using CachePersist.Net.Formatters;
 using CachePersist.Net.Caching;
 
-namespace CachePersist.Net
+namespace CachePersistExmaple
 {
-    [Serializable, ProtoContract]
-    class Test
-    {
-        [ProtoMember(1)]
-        public int Something { get; set; }
-    }
-
-    [Serializable, ProtoContract]
-    enum eTest : short
-    {
-        One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten
-    }
-
-    [Serializable, ProtoContract]
-    struct sTest
-    {
-        [ProtoMember(1)]
-        public eTest A {get; set;}
-
-        [ProtoMember(2)]
-        public eTest B {get; set;}
-    }
-
     class Program
     {
-        static void Main(string[] args)
+        static void PersistentDictionaryExample()
         {
-            var store = new CacheKeyStorageJsonFile("/tmp/store");
+            var tempFilePath = Path.GetTempFileName();
+
+            /* Open the dictionary and write something */
+            {
+                var store = new DictionaryStoreJsonFile<int, string>(tempFilePath);
+                var dict = new PersistentDictionary<int, string>(store);
+
+                dict[42] = "Hello world!";
+            }
+
+            /* Open the dictionary and read something back */
+            {
+                var store = new DictionaryStoreJsonFile<int, string>(tempFilePath);
+                var dict = new PersistentDictionary<int, string>(store);
+
+                var s = dict[42];
+                Console.WriteLine($"String from dictionary: {s}");
+
+                if (dict.TryGetValue(43, out var s2))
+                {
+                    Console.WriteLine($"This shouldn't be here: {s2}");
+                }
+            }
+
+            File.Delete(tempFilePath);
+        }
+
+        private static void CacheExample()
+        {
+            var cacheFilePath = Path.Combine(Path.GetTempPath(), "CachePersist.Net.CacheExample.json");
+            var store = new CacheKeyStorageJsonFile(cacheFilePath);
             var cache = new Cache(store);
 
-            //cache.Clear();
-            cache.Cleanup();
+            /* Check if our values have been cached already */
+            if (cache.TryGetValue<TestData[]>("nonsense", out var cachedNonsense))
+            {
+                Console.WriteLine($"Found {cachedNonsense.Length} entries of TestData in the cache!");
 
-            //cache["test"] = 42;
-            //cache["test"] = "hallo";
+                /* We can also get the entries that are added with a non-default formatter, since the type of
+                 * the formatter that was used is also stored with the data */
+                var moreNonsense = cache.Get<TestData[]>("moreNonsense");
+                var compressedNonsense = cache.Get<TestData[]>("compressedNonsense");
 
-            //var ci = cache.GetCacheInfo("test");
+                /* Clear all the data from the cache */
+                cache.Clear();
 
-            cache.Set("test", "hello world");
+                /* And delete the json store */
+                File.Delete(cacheFilePath);
+
+                return;
+            }
+
+            Console.WriteLine("Looks like there's no data cached. Let's generate some nonsense data and cache it");
+
+            /* Generate some test data */
+            var nonsense = TestData.GenerateSomeData(10000);
+
+            /* We can simply cache the result directly */
+            cache["nonsense"] = nonsense;
+
+            /* Or we could use a non-default formatter that uses another serializer to store the data */
+            cache.Set("moreNonsense", nonsense, new ProtobufStreamFormatter<TestData[]>());
+
+            /* Or */
+            cache.Set("compressedNonsense", nonsense, new BinaryCompressedStreamFormatter());
+        }
+
+        private static void DictionaryStoreJsonStringExample()
+        {
+            /* This is where we will store the JSON in. In a real-world application you would use
+             * something like the System.Configuration.ApplicationSettingsBase to store this string */
+            string jsonString = "";
+
+            var store = new DictionaryStoreJsonString<int, string>(jsonString);
+            var dict = new PersistentDictionary<int, string>(store);
+
+            /* When a value is added to the dictionary, the store will fire the Saving event, which
+             * will contain the new value of the JSON string in its EventArgs */
+            store.Saving += (o, e) => {
+                jsonString = e.Json;
+                Console.WriteLine($"Our JSON string is now: {jsonString}");
+            };
+
+            Console.WriteLine("Adding an entry to the dictionary.");
+            dict[42] = "Hello world!";
+
+            var s = dict[42];
+            Console.WriteLine($"String from dictionary: {s}");
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("PersistentDictionary example:");  
+            PersistentDictionaryExample();
+
+            Console.WriteLine("");
+            Console.WriteLine("Cache example:");
+            CacheExample();
             
-            var s = cache.Get<string>("test");
-
-            Console.WriteLine(s);
-
-            //Console.WriteLine($"one: {cache.GetCacheInfo("one")}");
-            //Console.WriteLine($"two: {cache.GetCacheInfo("two")}");
-            Console.WriteLine($"three: {cache.GetCacheInfo("three")}");
-
-            //var one = cache.Get<sTest[]>("one");
-            //var two = cache.Get<sTest[]>("two");
-            var three333 = cache.Get<sTest[]>("three");
-
-            if (cache.TryGetValue<sTest[]>("three", out var three))
-            {
-
-            }
-
-            return;
-
-            var n = 1000000;
-            var manyThings = new sTest[n];
-
-            var rnd = new Random();
-            for (var i = 0; i < n; i++)
-            {
-                manyThings[i].A = (eTest) rnd.Next();
-                manyThings[i].B = (eTest) rnd.Next();
-            }
-
-            cache.Set("one", manyThings, new BinaryCompressedStreamFormatter());
-            cache.Set("two", manyThings, new BinaryStreamFormatter());
-            cache.Set("three", manyThings, new ProtobufStreamFormatter<sTest[]>());
-
-            //Test(manyThings, new BinaryCompressedStreamFormatter());
-            //Test(manyThings, new BinaryCompressedStreamFormatter(System.IO.Compression.CompressionLevel.Fastest));
-            //Test(manyThings, new BinaryCompressedStreamFormatter(System.IO.Compression.CompressionLevel.NoCompression));
-            //Test(manyThings, new BinaryStreamFormatter());
+            Console.WriteLine("");
+            Console.WriteLine("DictionaryStoreJsonString example:");
+            DictionaryStoreJsonStringExample();
         }
     }
 }
