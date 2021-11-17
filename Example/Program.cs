@@ -1,4 +1,10 @@
-﻿using System;
+﻿/* This file is part of CachePersist.Net
+ *
+ * Copyright (c) 2021 Tom Wimmenhove. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root for details.
+ */
+
+using System;
 using System.IO;
 using CachePersist.Net.Persistence;
 using CachePersist.Net.Formatters;
