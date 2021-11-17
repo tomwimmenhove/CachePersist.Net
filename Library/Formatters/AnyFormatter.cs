@@ -9,8 +9,8 @@ namespace CachePersist.Net.Formatters
         {
             using (var reader = new BinaryReader(stream, System.Text.Encoding.Default, true))
             {
-                var serializeName = reader.ReadString();
-                var type = Type.GetType(serializeName);
+                var serializerName = reader.ReadString();
+                var type = Type.GetType(serializerName);
                 if (type == null)
                 {
                     return null;
@@ -20,12 +20,24 @@ namespace CachePersist.Net.Formatters
             }
         }
 
-        public static void Serialize<T>(Stream stream, T value, IStreamFormatter formatter)
+        private static string GetTypeName(Type type, bool fullyQualifiedNames)
+        {
+            if (fullyQualifiedNames)
+            {
+                return type.AssemblyQualifiedName;
+            }
+
+            var assemblyName = type.Assembly.GetName().Name;
+            return $"{type.FullName}, {assemblyName}";
+        }
+
+        public static void Serialize<T>(Stream stream, T value, IStreamFormatter formatter,
+            bool fullyQualifiedNames = false)
         {
             using (var writer = new BinaryWriter(stream))
             {
                 /* Store which formatter was used */
-                var serializerName = formatter.GetType().AssemblyQualifiedName;
+                var serializerName = GetTypeName(formatter.GetType(), fullyQualifiedNames);
                 writer.Write(serializerName);
                 writer.Flush();
 
