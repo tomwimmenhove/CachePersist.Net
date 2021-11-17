@@ -10,7 +10,13 @@ namespace CachePersist.Net.Formatters
             using (var reader = new BinaryReader(stream, System.Text.Encoding.Default, true))
             {
                 var serializeName = reader.ReadString();
-                return (IStreamFormatter) Activator.CreateInstance(Type.GetType(serializeName));
+                var type = Type.GetType(serializeName);
+                if (type == null)
+                {
+                    return null;
+                }
+
+                return (IStreamFormatter) Activator.CreateInstance(type);
             }
         }
 
@@ -31,6 +37,11 @@ namespace CachePersist.Net.Formatters
         public static T Deserialize<T>(Stream stream)
         {
             var formatter = GetStreamFormatter(stream);
+
+            if (formatter == null)
+            {
+                throw new NotSupportedException("Could not load the formatter used to serialize the object");
+            }
 
             return (T)formatter.Deserialize(stream);
         }

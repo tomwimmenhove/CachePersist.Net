@@ -34,14 +34,18 @@ namespace CachePersist.Net.Caching
         {
             if (_keyDictionary.TryGetValue(key, out var filename) && File.Exists(filename))
             {
+                value = default;
+
                 try
                 {
                     value = AnyFormatter.Deserialize<T>(filename);
                 }
+                catch (NotSupportedException)
+                {
+                    return false;
+                }
                 catch (InvalidCastException)
                 {
-                    value = default;
-                    
                     return false;
                 }
 
