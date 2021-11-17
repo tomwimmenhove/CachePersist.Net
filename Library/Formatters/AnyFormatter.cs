@@ -11,33 +11,7 @@ namespace CachePersist.Net.Formatters
 {
     public class AnyFormatter
     {
-        private static IStreamFormatter GetStreamFormatter(Stream stream)
-        {
-            using (var reader = new BinaryReader(stream, System.Text.Encoding.Default, true))
-            {
-                var serializerName = reader.ReadString();
-                var type = Type.GetType(serializerName);
-                if (type == null)
-                {
-                    return null;
-                }
-
-                return (IStreamFormatter) Activator.CreateInstance(type);
-            }
-        }
-
-        private static string GetTypeName(Type type, bool fullyQualifiedNames)
-        {
-            if (fullyQualifiedNames)
-            {
-                return type.AssemblyQualifiedName;
-            }
-
-            var assemblyName = type.Assembly.GetName().Name;
-            return $"{type.FullName}, {assemblyName}";
-        }
-
-        public static void Serialize<T>(Stream stream, T value, IStreamFormatter formatter,
+         public static void Serialize<T>(Stream stream, T value, IStreamFormatter formatter,
             bool fullyQualifiedNames = false)
         {
             using (var writer = new BinaryWriter(stream))
@@ -78,6 +52,32 @@ namespace CachePersist.Net.Formatters
             {
                 return Deserialize<T>(stream);
             }
+        }
+
+       private static IStreamFormatter GetStreamFormatter(Stream stream)
+        {
+            using (var reader = new BinaryReader(stream, System.Text.Encoding.Default, true))
+            {
+                var serializerName = reader.ReadString();
+                var type = Type.GetType(serializerName);
+                if (type == null)
+                {
+                    return null;
+                }
+
+                return (IStreamFormatter) Activator.CreateInstance(type);
+            }
+        }
+
+        private static string GetTypeName(Type type, bool fullyQualifiedNames)
+        {
+            if (fullyQualifiedNames)
+            {
+                return type.AssemblyQualifiedName;
+            }
+
+            var assemblyName = type.Assembly.GetName().Name;
+            return $"{type.FullName}, {assemblyName}";
         }
     }
 }
