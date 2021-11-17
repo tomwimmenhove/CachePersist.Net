@@ -6,14 +6,13 @@
 
 using System.IO;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Runtime.Serialization.Json;
 
 namespace CachePersist.Net.Persistence
 {
     public class DictionaryStoreJsonFile<TKey, TValue> : IDictionaryStore<TKey, TValue>
     {
         private string _filename;
-        private JsonSerializer _serializer = new JsonSerializer();
 
         public IDictionary<TKey, TValue> Dictionary { get; }
 
@@ -21,14 +20,14 @@ namespace CachePersist.Net.Persistence
         {
             _filename = filename;
 
-            if (File.Exists(filename))
+            var fileInfo = new FileInfo(filename);
+            if (fileInfo.Exists && fileInfo.Length > 0)
             {
-                using var file = File.OpenText(filename);
-                Dictionary = (IDictionary<TKey, TValue>)_serializer.Deserialize(file, typeof(IDictionary<TKey, TValue>));
-                if (Dictionary != null)
-                {
-                    return;
-                }
+                using var stream = File.Open(filename, FileMode.Open);
+
+                var serializer = new DataContractJsonSerializer(typeof(Dictionary<TKey, TValue>));
+                Dictionary = (IDictionary<TKey, TValue>) serializer.ReadObject(stream);
+                return;
             }
 
             Dictionary = new Dictionary<TKey, TValue>();
@@ -36,8 +35,9 @@ namespace CachePersist.Net.Persistence
 
         public void Save()
         {
-            using var file = File.CreateText(_filename);
-            _serializer.Serialize(file, Dictionary);
+            var serializer = new DataContractJsonSerializer(typeof(Dictionary<TKey, TValue>));
+            using var stream = File.Create(_filename);
+            serializer.WriteObject(stream, Dictionary);
         }
     }
 }

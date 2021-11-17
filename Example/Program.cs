@@ -87,7 +87,7 @@ namespace CachePersistExmaple
         {
             /* This is where we will store the JSON in. In a real-world application you would use
              * something like the System.Configuration.ApplicationSettingsBase to store this string */
-            string jsonString = "";
+            string jsonString = "[{\"Key\":42,\"Value\":\"Hello world!\"}]";
 
             var store = new DictionaryStoreJsonString<int, string>(jsonString);
             var dict = new PersistentDictionary<int, string>(store);
