@@ -11,19 +11,18 @@ namespace CachePersist.Net.Formatters
 {
     public class AnyFormatter
     {
-         public static void Serialize<T>(Stream stream, T value, IStreamFormatter formatter,
-            bool fullyQualifiedNames = false)
+        public static void Serialize<T>(Stream stream, T value, IStreamFormatter formatter,
+           bool fullyQualifiedNames = false)
         {
-            using (var writer = new BinaryWriter(stream))
-            {
-                /* Store which formatter was used */
-                var serializerName = GetTypeName(formatter.GetType(), fullyQualifiedNames);
-                writer.Write(serializerName);
-                writer.Flush();
+            using var writer = new BinaryWriter(stream);
 
-                /* And the data */
-                formatter.Serialize(stream, value);
-            }
+            /* Store which formatter was used */
+            var serializerName = GetTypeName(formatter.GetType(), fullyQualifiedNames);
+            writer.Write(serializerName);
+            writer.Flush();
+
+            /* And the data */
+            formatter.Serialize(stream, value);
         }
 
         public static T Deserialize<T>(Stream stream)
@@ -40,33 +39,27 @@ namespace CachePersist.Net.Formatters
 
         public static void Serialize<T>(string filePath, T value, IStreamFormatter formatter)
         {
-            using (var stream = File.Open(filePath, FileMode.Create))
-            {
-                Serialize(stream, value, formatter);
-            }
+            using var stream = File.Open(filePath, FileMode.Create);
+            Serialize(stream, value, formatter);
         }
 
         public static T Deserialize<T>(string filePath)
         {
-            using (var stream = File.Open(filePath, FileMode.Open))
-            {
-                return Deserialize<T>(stream);
-            }
+            using var stream = File.Open(filePath, FileMode.Open);
+            return Deserialize<T>(stream);
         }
 
-       private static IStreamFormatter GetStreamFormatter(Stream stream)
+        private static IStreamFormatter GetStreamFormatter(Stream stream)
         {
-            using (var reader = new BinaryReader(stream, System.Text.Encoding.Default, true))
+            using var reader = new BinaryReader(stream, System.Text.Encoding.Default, true);
+            var serializerName = reader.ReadString();
+            var type = Type.GetType(serializerName);
+            if (type == null)
             {
-                var serializerName = reader.ReadString();
-                var type = Type.GetType(serializerName);
-                if (type == null)
-                {
-                    return null;
-                }
-
-                return (IStreamFormatter) Activator.CreateInstance(type);
+                return null;
             }
+
+            return (IStreamFormatter)Activator.CreateInstance(type);
         }
 
         private static string GetTypeName(Type type, bool fullyQualifiedNames)

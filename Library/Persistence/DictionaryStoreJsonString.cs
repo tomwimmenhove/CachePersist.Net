@@ -5,10 +5,8 @@
  */
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization.Json;
+using System.Text.Json;
 
 namespace CachePersist.Net.Persistence
 {
@@ -22,33 +20,13 @@ namespace CachePersist.Net.Persistence
         {
             Dictionary = string.IsNullOrEmpty(initialJson)
                 ? new Dictionary<TKey, TValue>()
-                : Deserialize(initialJson);
+                : JsonSerializer.Deserialize<IDictionary<TKey, TValue>>(initialJson);
         }
 
         public void Save()
         {
-            var json = Serialize(Dictionary);
+            var json = JsonSerializer.Serialize(Dictionary);
             Saving?.Invoke(this, new JsonStringSavingEventArgs(json));
-        }
-
-        private static string Serialize(IDictionary<TKey, TValue> item)
-        {
-            var serializer = new DataContractJsonSerializer(typeof(Dictionary<TKey, TValue>));
-            using var stream = new MemoryStream();
-            serializer.WriteObject(stream, item);
-            return Encoding.Default.GetString(stream.ToArray());
-        }
-
-        private static IDictionary<TKey, TValue> Deserialize(string json)
-        {
-            var serializer = new DataContractJsonSerializer(typeof(Dictionary<TKey, TValue>));
-            using var stream = new MemoryStream();
-            using var writer = new StreamWriter(stream);
-            writer.Write(json);
-            writer.Flush();
-            stream.Position = 0;
-
-            return (IDictionary<TKey, TValue>)serializer.ReadObject(stream);
         }
     }
 }

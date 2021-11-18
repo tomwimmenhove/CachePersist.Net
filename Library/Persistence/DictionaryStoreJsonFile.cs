@@ -6,7 +6,7 @@
 
 using System.IO;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Json;
+using System.Text.Json;
 
 namespace CachePersist.Net.Persistence
 {
@@ -23,10 +23,9 @@ namespace CachePersist.Net.Persistence
             var fileInfo = new FileInfo(filename);
             if (fileInfo.Exists && fileInfo.Length > 0)
             {
-                using var stream = File.Open(filename, FileMode.Open);
+                var json = File.ReadAllText(filename);
+                Dictionary = JsonSerializer.Deserialize<IDictionary<TKey, TValue>>(json);
 
-                var serializer = new DataContractJsonSerializer(typeof(Dictionary<TKey, TValue>));
-                Dictionary = (IDictionary<TKey, TValue>) serializer.ReadObject(stream);
                 return;
             }
 
@@ -35,9 +34,8 @@ namespace CachePersist.Net.Persistence
 
         public void Save()
         {
-            var serializer = new DataContractJsonSerializer(typeof(Dictionary<TKey, TValue>));
-            using var stream = File.Create(_filename);
-            serializer.WriteObject(stream, Dictionary);
+            var json = JsonSerializer.Serialize(Dictionary);
+            File.WriteAllText(_filename, json);
         }
     }
 }
