@@ -121,7 +121,8 @@ namespace CachePersist.Net.Caching
 
         public void Clear()
         {
-            foreach (var key in Keys)
+            var keys = new List<string>(Keys);
+            foreach (var key in keys)
             {
                 Remove(key);
             }
