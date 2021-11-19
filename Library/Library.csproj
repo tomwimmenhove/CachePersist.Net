@@ -5,7 +5,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>CachePersist.Net</PackageId>
     <Title>CachePersist.Net</Title>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Tom Wimmenhove</Authors>
     <Company />
     <Product>CachePersist.Net</Product>
@@ -16,12 +16,13 @@
     <PackageProjectUrl>https://github.com/tomwimmenhove/CachePersist.Net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tomwimmenhove/CachePersist.Net</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
-    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <PackageReleaseNotes>CachePersist.Net.Caching.CacheKeyStorageJsonString implements CachePersist.Net.Caching.ICacheKeyStorage to make it usable for CachePersist.Net.Caching.Cache's store.
+Depend on System.Text.Json 5 instead of 6 for better compatibility</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="protobuf-net" Version="3.0.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
