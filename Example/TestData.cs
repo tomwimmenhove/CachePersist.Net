@@ -35,8 +35,8 @@ namespace CachePersistExmaple
             {
                 var entry = new TestData()
                 {
-                    SomeEnum = (TestData.eCount)rnd.Next(),
-                    AnotherEnum = (TestData.eCount)rnd.Next(),
+                    SomeEnum = (eCount)rnd.Next(),
+                    AnotherEnum = (eCount)rnd.Next(),
                     Something = rnd.Next()
                 };
 

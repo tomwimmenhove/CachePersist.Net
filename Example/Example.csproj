@@ -1,11 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\Library\Library.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="protobuf-net" Version="3.0.101" />
   </ItemGroup>
 
   <PropertyGroup>
