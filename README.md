@@ -5,3 +5,16 @@ With the disk-caching system you can use (string) keys load and store any serial
 
 The [Example/Program.cs](https://github.com/tomwimmenhove/CachePersist.Net/blob/main/Example/Program.cs) file contains some simple examples on how to use the library.
 
+## Installation
+
+Through the package manager:
+```
+Install-Package CachePersist.Net
+```
+
+Or using .NET CLI:
+```
+dotnet add package CachePersist.Net
+```
+
+You can find the package on Nuget using this link: https://www.nuget.org/packages/CachePersist.Net/
