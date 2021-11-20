@@ -154,6 +154,10 @@ namespace Tests
         public void TestCacheProtobufStreamFormatterJson() =>
             TestCacheFormatter(new ProtobufStreamFormatter<int[]>(), typeof(CacheKeyStorageJsonFile));
 
+        [TestMethod]
+        public void TestCacheProtobufCompressedStreamFormatterJson() =>
+            TestCacheFormatter(new ProtobufCompressedStreamFormatter<int[]>(), typeof(CacheKeyStorageJsonFile));
+
 
         [TestMethod]
         public void TestCacheBinaryStreamFormatterBinary() =>
@@ -166,6 +170,10 @@ namespace Tests
         [TestMethod]
         public void TestCacheProtobufStreamFormatterBinary() =>
             TestCacheFormatter(new ProtobufStreamFormatter<int[]>(), typeof(CacheKeyStorageBinaryFile));
+
+        [TestMethod]
+        public void TestCacheProtobufCompressedStreamFormatterBinary() =>
+            TestCacheFormatter(new ProtobufCompressedStreamFormatter<int[]>(), typeof(CacheKeyStorageBinaryFile));
 
         public void TestCacheFormatter(IStreamFormatter formatter, Type storageType)
         {
