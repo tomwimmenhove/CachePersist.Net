@@ -4,37 +4,18 @@
  * Licensed under the MIT license. See LICENSE file in the project root for details.
  */
 
-using System.IO;
 using System.IO.Compression;
 
 namespace CachePersist.Net.Formatters
 {
-    public class BinaryCompressedStreamFormatter : IStreamFormatter
+    public class BinaryCompressedStreamFormatter : StreamFormatterCompressor
     {
-        private BinaryStreamFormatter _formatter = new BinaryStreamFormatter();
-        private CompressionLevel _compressionLevel = CompressionLevel.Optimal;
-
-        public BinaryCompressedStreamFormatter() { }
+        public BinaryCompressedStreamFormatter()
+            : base(new BinaryStreamFormatter(), CompressionLevel.Optimal)
+        { }
 
         public BinaryCompressedStreamFormatter(CompressionLevel compressionLevel)
-        {
-            _compressionLevel = compressionLevel;
-        }
-
-        public void Serialize(Stream stream, object value)
-        {
-            using (var compressor = new GZipStream(stream, _compressionLevel))
-            {
-                _formatter.Serialize(compressor, value);
-            }
-        }
-
-        public object Deserialize(Stream stream)
-        {
-            using (var compressor = new GZipStream(stream, CompressionMode.Decompress))
-            {
-                return _formatter.Deserialize(compressor);
-            }
-        }
+            : base(new BinaryStreamFormatter(), compressionLevel)
+        { }
     }
 }
