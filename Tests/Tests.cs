@@ -107,18 +107,67 @@ namespace Tests
         }
 
         [TestMethod]
-        public void TestCacheBinaryStreamFormatter() =>
-            TestCacheFormatter(new BinaryStreamFormatter());
+        public void TestCacheKeyStorageBinaryFile()
+        {
+            var tempFilePath = Path.GetTempFileName();
+
+            {
+                var store = new CacheKeyStorageBinaryFile(tempFilePath);
+
+                store.Dictionary["hello"] = "world";
+                store.Dictionary["fruit"] = "apple";
+                store.Dictionary["animal"] = "dog";
+
+                store.Save();
+            }
+
+            {
+                var store = new CacheKeyStorageBinaryFile(tempFilePath);
+
+                store.Dictionary.Remove("fruit");
+
+                store.Save();
+            }
+
+            {
+                var store = new CacheKeyStorageBinaryFile(tempFilePath);
+
+                Assert.AreEqual(store.Dictionary["hello"], "world");
+                Assert.AreEqual(store.Dictionary["animal"], "dog");
+                Assert.IsFalse(store.Dictionary.ContainsKey("fruit"));
+
+                store.Save();
+            }
+
+            File.Delete(tempFilePath);
+        }
 
         [TestMethod]
-        public void TestCacheBinaryCompressedStreamFormatter() =>
-            TestCacheFormatter(new BinaryCompressedStreamFormatter());
+        public void TestCacheBinaryStreamFormatterJson() =>
+            TestCacheFormatter(new BinaryStreamFormatter(), typeof(CacheKeyStorageJsonFile));
 
         [TestMethod]
-        public void TestCacheProtobufStreamFormatter() =>
-            TestCacheFormatter(new ProtobufStreamFormatter<int[]>());
+        public void TestCacheBinaryCompressedStreamFormatterJson() =>
+            TestCacheFormatter(new BinaryCompressedStreamFormatter(), typeof(CacheKeyStorageJsonFile));
 
-        public void TestCacheFormatter(IStreamFormatter formatter)
+        [TestMethod]
+        public void TestCacheProtobufStreamFormatterJson() =>
+            TestCacheFormatter(new ProtobufStreamFormatter<int[]>(), typeof(CacheKeyStorageJsonFile));
+
+
+        [TestMethod]
+        public void TestCacheBinaryStreamFormatterBinary() =>
+            TestCacheFormatter(new BinaryStreamFormatter(), typeof(CacheKeyStorageBinaryFile));
+
+        [TestMethod]
+        public void TestCacheBinaryCompressedStreamFormatterBinary() =>
+            TestCacheFormatter(new BinaryCompressedStreamFormatter(), typeof(CacheKeyStorageBinaryFile));
+
+        [TestMethod]
+        public void TestCacheProtobufStreamFormatterBinary() =>
+            TestCacheFormatter(new ProtobufStreamFormatter<int[]>(), typeof(CacheKeyStorageBinaryFile));
+
+        public void TestCacheFormatter(IStreamFormatter formatter, Type storageType)
         {
             var n = 10000;
             var data1 = new int[n];
@@ -132,7 +181,7 @@ namespace Tests
             var tempFilePath = Path.GetTempFileName();
 
             {
-                var store = new CacheKeyStorageJsonFile(tempFilePath);
+                var store = (ICacheKeyStorage) Activator.CreateInstance(storageType, tempFilePath);
                 var cache = new Cache(store);
 
                 Assert.IsFalse(cache.ContainsKey("test1"));
@@ -147,7 +196,7 @@ namespace Tests
             }
 
             {
-                var store = new CacheKeyStorageJsonFile(tempFilePath);
+                var store = (ICacheKeyStorage) Activator.CreateInstance(storageType, tempFilePath);
                 var cache = new Cache(store);
 
                 Assert.AreEqual(cache.Keys.Count, 2);
@@ -168,7 +217,7 @@ namespace Tests
             }
 
             {
-                var store = new CacheKeyStorageJsonFile(tempFilePath);
+                var store = (ICacheKeyStorage) Activator.CreateInstance(storageType, tempFilePath);
                 var cache = new Cache(store);
 
                 Assert.IsTrue(cache.ContainsKey("test1"));
