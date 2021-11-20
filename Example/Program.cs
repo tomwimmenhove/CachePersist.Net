@@ -112,7 +112,10 @@ namespace CachePersistExmaple
             PersistentDictionaryExample();
 
             Console.WriteLine("");
-            Console.WriteLine("Cache example:");
+            Console.WriteLine("Run cache example for the first time:");
+            CacheExample();
+            Console.WriteLine("");
+            Console.WriteLine("Run cache example for the second time:");
             CacheExample();
             
             Console.WriteLine("");
