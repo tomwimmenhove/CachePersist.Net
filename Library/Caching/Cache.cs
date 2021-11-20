@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using CachePersist.Net.Formatters;
+using System.Linq;
 
 namespace CachePersist.Net.Caching
 {
@@ -88,12 +89,16 @@ namespace CachePersist.Net.Caching
 
         public bool Remove(string key)
         {
-            if (_keyDictionary.TryGetValue(key, out var filename) && File.Exists(filename))
+            if (_keyDictionary.TryGetValue(key, out var filename))
             {
-                File.Delete(filename);
-                _keyDictionary.Remove(key);
+                if (File.Exists(filename))
+                {
+                    File.Delete(filename);
 
-                return true;
+                    return true;
+                }
+
+                _keyDictionary.Remove(key);
             }
 
             return false;
@@ -101,48 +106,58 @@ namespace CachePersist.Net.Caching
 
         public int RemoveBefore(DateTime time)
         {
-            var n = 0;
-            foreach (var key in Keys)
+            var removeKeys = new List<string>();
+            foreach(var kvp in _keyDictionary)
             {
-                if (_keyDictionary.TryGetValue(key, out var filename) &&
-                    File.Exists(filename) &&
-                    new FileInfo(filename).CreationTimeUtc < time.ToUniversalTime())
+                if (File.Exists(kvp.Value))
                 {
-                    File.Delete(filename);
-                    _keyDictionary.Remove(key);
-                    n++;
+                    var fileInfo = new FileInfo(kvp.Value);
+                    if (fileInfo.CreationTimeUtc < time.ToUniversalTime())
+                    {
+                        File.Delete(kvp.Value);
+                        removeKeys.Add(kvp.Key);
+                    }
+                }
+                else
+                {
+                    removeKeys.Add(kvp.Key);
                 }
             }
 
-            return n;
+            foreach(var key in removeKeys)
+            {
+                _keyDictionary.Remove(key);
+            }
+
+            return removeKeys.Count;
         }
 
         public int RemoveOlderThan(TimeSpan age) => RemoveBefore(DateTime.Now - age);
 
         public void Clear()
         {
-            var keys = new List<string>(Keys);
-            foreach (var key in keys)
+            foreach (var filename in _keyDictionary.Values.Where(File.Exists))
             {
-                Remove(key);
+                File.Delete(filename);
             }
+
+            _keyDictionary.Clear();
         }
 
         public int Cleanup()
         {
-            var n = 0;
-            foreach (var key in Keys)
+            var removeKeys = new List<string>();
+            foreach(var kvp in _keyDictionary.Where(x => !File.Exists(x.Value)))
             {
-                if (_keyDictionary.TryGetValue(key, out var filename) &&
-                    !File.Exists(filename))
-                {
-                    _keyDictionary.Remove(key);
-
-                    n++;
-                }
+                removeKeys.Add(kvp.Key);
             }
 
-            return n;
+            foreach(var key in removeKeys)
+            {
+                _keyDictionary.Remove(key);
+            }
+
+            return removeKeys.Count;
         }
     }
 }
