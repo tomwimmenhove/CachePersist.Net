@@ -41,11 +41,12 @@ namespace CachePersist.Net.Formatters
             return (T)formatter.Deserialize(stream);
         }
 
-        public static void Serialize<T>(string filePath, T value, IStreamFormatter formatter)
+        public static void Serialize<T>(string filePath, T value, IStreamFormatter formatter,
+            bool fullyQualifiedNames = false)
         {
             using (var stream = File.Open(filePath, FileMode.Create))
             {
-                Serialize(stream, value, formatter);
+                Serialize(stream, value, formatter, fullyQualifiedNames);
             }
         }
 
