@@ -12,7 +12,7 @@ namespace CachePersist.Net.Persistence
 {
     public class DictionaryStoreJsonFile<TKey, TValue> : IDictionaryStore<TKey, TValue>
     {
-        private string _filename;
+        private readonly string _filename;
 
         public IDictionary<TKey, TValue> Dictionary { get; }
 
@@ -23,7 +23,7 @@ namespace CachePersist.Net.Persistence
             var fileInfo = new FileInfo(filename);
             if (fileInfo.Exists && fileInfo.Length > 0)
             {
-                var json = File.ReadAllText(filename);
+                var json = File.ReadAllBytes(filename);
                 Dictionary = JsonSerializer.Deserialize<IDictionary<TKey, TValue>>(json);
 
                 return;
@@ -34,8 +34,8 @@ namespace CachePersist.Net.Persistence
 
         public void Save()
         {
-            var json = JsonSerializer.Serialize(Dictionary);
-            File.WriteAllText(_filename, json);
+            var json = JsonSerializer.SerializeToUtf8Bytes(Dictionary);
+            File.WriteAllBytes(_filename, json);
         }
     }
 }
