@@ -6,11 +6,14 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace CachePersist.Net.Formatters
 {
     public class AnyFormatter
     {
+        private static Dictionary<string, Type> _typeLookup = new Dictionary<string, Type>();
+
         public static void Serialize<T>(Stream stream, T value, IStreamFormatter formatter,
            bool fullyQualifiedNames = false)
         {
@@ -60,7 +63,11 @@ namespace CachePersist.Net.Formatters
             using (var reader = new BinaryReader(stream, System.Text.Encoding.Default, true))
             {
                 var serializerName = reader.ReadString();
-                type = Type.GetType(serializerName);
+                if (!_typeLookup.TryGetValue(serializerName, out type))
+                {
+                    _typeLookup[serializerName] = type = Type.GetType(serializerName);
+                }
+
                 if (type == null)
                 {
                     return null;
