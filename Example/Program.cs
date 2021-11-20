@@ -5,7 +5,9 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CachePersist.Net.Persistence;
 using CachePersist.Net.Formatters;
 using CachePersist.Net.Caching;
@@ -108,6 +110,31 @@ namespace CachePersistExmaple
 
         static void Main(string[] args)
         {
+            var finder = new FormatterFinder();
+
+            //var data = new TestData();
+            //var data = TestData.GenerateSomeData(3);
+            //var data = 42;
+            //var data = new int[] { 1, 2, 3, 4};
+
+            var d = new List<TestData>();
+
+            d.Add(new TestData());
+            d.Add(new TestData { SomeEnum = TestData.eCount.Eight });
+
+            var data = d;//.AsReadOnly();
+
+            var formatter = finder.FindFor(data);
+
+            var tempFilePath = Path.GetTempFileName();
+
+            AnyFormatter.Serialize(tempFilePath, data, formatter);
+
+            var testData = AnyFormatter.Deserialize<List<TestData>>(tempFilePath);
+
+            File.Delete(tempFilePath);
+
+            return;
             Console.WriteLine("PersistentDictionary example:");  
             PersistentDictionaryExample();
 
