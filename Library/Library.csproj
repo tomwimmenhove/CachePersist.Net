@@ -5,7 +5,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>CachePersist.Net</PackageId>
     <Title>CachePersist.Net</Title>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <Authors>Tom Wimmenhove</Authors>
     <Company />
     <Product>CachePersist.Net</Product>
@@ -16,8 +16,14 @@
     <PackageProjectUrl>https://github.com/tomwimmenhove/CachePersist.Net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tomwimmenhove/CachePersist.Net</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
-    <PackageReleaseNotes>CachePersist.Net.Caching.CacheKeyStorageJsonString implements CachePersist.Net.Caching.ICacheKeyStorage to make it usable for CachePersist.Net.Caching.Cache's store.
-Depend on System.Text.Json 5 instead of 6 for better compatibility</PackageReleaseNotes>
+    <PackageReleaseNotes>Directly write UTF-8 bytes with JsonSerializer
+        Keep static string->Type lookup table
+        Some improvements in cleaning/removing items from cache
+        Better testing
+        Added custom binary ICacheKeyStorage implementation: CacheKeyStorageBinaryFile
+        BUGFIX: AnyFormatter.Serialize(filePath...) did not have a fullyQualifiedNames parameter
+        Added ProtobufCompressedStreamFormatter
+</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
