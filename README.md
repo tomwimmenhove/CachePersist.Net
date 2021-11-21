@@ -18,3 +18,5 @@ dotnet add package CachePersist.Net
 ```
 
 You can find the package on Nuget using this link: https://www.nuget.org/packages/CachePersist.Net/
+
+[![dotnet build/test on GitHub](https://github.com/tomwimmenhove/CachePersist.Net/actions/workflows/github-actions-testbuild.yml/badge.svg)](https://github.com/tomwimmenhove/CachePersist.Net/actions/workflows/github-actions-testbuild.yml)
