@@ -1,4 +1,4 @@
-name: dotnet package
+name: dotnet build/test on agent.tomwimmenhove.com
 
 on: [push]
 
