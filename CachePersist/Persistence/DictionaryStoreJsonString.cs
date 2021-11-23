@@ -20,7 +20,7 @@ namespace CachePersist.Net.Persistence
         {
             Dictionary = string.IsNullOrEmpty(initialJson)
                 ? new Dictionary<TKey, TValue>()
-                : JsonSerializer.Deserialize<IDictionary<TKey, TValue>>(initialJson);
+                : JsonSerializer.Deserialize<Dictionary<TKey, TValue>>(initialJson);
         }
 
         public void Save()

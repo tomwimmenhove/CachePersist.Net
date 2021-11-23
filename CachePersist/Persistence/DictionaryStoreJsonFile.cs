@@ -24,7 +24,7 @@ namespace CachePersist.Net.Persistence
             if (fileInfo.Exists && fileInfo.Length > 0)
             {
                 var json = File.ReadAllBytes(filename);
-                Dictionary = JsonSerializer.Deserialize<IDictionary<TKey, TValue>>(json);
+                Dictionary = JsonSerializer.Deserialize<Dictionary<TKey, TValue>>(json);
 
                 return;
             }
