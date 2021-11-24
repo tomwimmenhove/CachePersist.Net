@@ -23,6 +23,8 @@ namespace CachePersist.Net.Caching
         public Cache(ICacheKeyStorage store)
         {
             _keyDictionary = new CacheKeyDictionary(store);
+
+            Cleanup();
         }
 
         public bool ContainsKey(string key) =>
@@ -94,11 +96,11 @@ namespace CachePersist.Net.Caching
                 if (File.Exists(filename))
                 {
                     File.Delete(filename);
-
-                    return true;
                 }
 
                 _keyDictionary.Remove(key);
+                
+                return true;
             }
 
             return false;

@@ -221,11 +221,33 @@ namespace Tests
 
                 CollectionAssert.AreEqual(cache.Get<int[]>("test1"), test1);
                 CollectionAssert.AreEqual(cache.Get<int[]>("test2"), test2);
+
+                try
+                {
+                    data2 = cache.Get<int[]>("test2");
+                }
+                catch (Exception)
+                {
+                    Assert.Fail();
+                }
+
+                Assert.IsTrue(cache.Keys.Contains("test2"));
                 cache.Remove("test2");
+                Assert.IsFalse(cache.Keys.Contains("test2"));
+
+                try
+                {
+                    data2 = cache.Get<int[]>("test2");
+                    Assert.Fail();
+                }
+                catch (Exception)
+                {
+                    /* Pass */
+                }
             }
 
             {
-                var store = (ICacheKeyStorage) Activator.CreateInstance(storageType, tempFilePath);
+                var store = (ICacheKeyStorage)Activator.CreateInstance(storageType, tempFilePath);
                 var cache = new Cache(store);
 
                 Assert.IsTrue(cache.ContainsKey("test1"));
@@ -237,6 +259,16 @@ namespace Tests
 
                 Assert.IsFalse(cache.ContainsKey("test1"));
                 Assert.IsFalse(cache.ContainsKey("test2"));
+
+                cache["manualDelete"] = 42;
+                File.Delete(cache.GetCacheInfo("manualDelete").FullName);
+            }
+
+            {
+                var store = (ICacheKeyStorage)Activator.CreateInstance(storageType, tempFilePath);
+                var cache = new Cache(store);
+
+                Assert.IsFalse(cache.ContainsKey("manualDelete"));
             }
 
             File.Delete(tempFilePath);
