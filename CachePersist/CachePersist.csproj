@@ -5,24 +5,18 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>CachePersist.Net</PackageId>
     <Title>CachePersist.Net</Title>
-    <Version>0.1.2</Version>
+    <Version>0.1.4</Version>
     <Authors>Tom Wimmenhove</Authors>
     <Company />
     <Product>CachePersist.Net</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>CachePersist.Net is a .NET library that allows you to persistently store data. It contains persistent dictionaries and a caching system. The persistent dictionaries are IDictionary implementations for persistent storare of key,value pairs. With the disk-caching system you can use (string) keys load and store any serializable object to and from disk. It lets you choose different serialization methods when storing values and automatically picks the correct deserializer when loading back from disk.</Description>
+    <Description>CachePersist.Net is a .NET library that allows you to persistently store data. It contains persistent dictionaries and a persistent cache system. The persistent dictionaries are IDictionary implementations for persistent storage of key,value pairs. With the disk-caching system you can use (string) keys load and store any serializable object to and from disk. It lets you choose different serialization methods when storing values and automatically picks the correct deserializer when loading back from disk.</Description>
     <Copyright>Copyright 2021</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/tomwimmenhove/CachePersist.Net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tomwimmenhove/CachePersist.Net</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
-    <PackageReleaseNotes>Directly write UTF-8 bytes with JsonSerializer
-        Keep static string->Type lookup table
-        Some improvements in cleaning/removing items from cache
-        Better testing
-        Added custom binary ICacheKeyStorage implementation: CacheKeyStorageBinaryFile
-        BUGFIX: AnyFormatter.Serialize(filePath...) did not have a fullyQualifiedNames parameter
-        Added ProtobufCompressedStreamFormatter
+    <PackageReleaseNotes>Fixed a bug when removing keys
 </PackageReleaseNotes>
   </PropertyGroup>
 
